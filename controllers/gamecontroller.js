@@ -20,7 +20,7 @@ router.get('/all', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
+    Game.findOne({ where: { id: req.params.id, owner_id: req.body.user.id } })
         .then(
             function findSuccess(game) {
                 res.status(200).json({
@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
 router.post('/create', (req, res) => {
     Game.create({
         title: req.body.game.title,
-        owner_id: req.body.user.id,
+        owner_id: req.body.game.user.id,
         studio: req.body.game.studio,
         esrb_rating: req.body.game.esrb_rating,
         user_rating: req.body.game.user_rating,
