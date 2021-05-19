@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-var User = require('../models/user');
+const User = require('../models/user');
 
 router.post('/signup', (req, res) => {
     User.create({
@@ -12,15 +12,14 @@ router.post('/signup', (req, res) => {
         email: req.body.user.email,
     })
         .then(
-            function signupSuccess(user) {
-                let token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+            (user) => {
+                const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                 res.status(200).json({
-                    user: user,
-                    token: token
+                    user,
+                    token
                 })
             },
-
-            function signupFail(err) {
+            (err) => {
                 res.status(500).send(err.message)
             }
         )
@@ -29,11 +28,11 @@ router.post('/signup', (req, res) => {
 router.post('/signin', (req, res) => {
     User.findOne({ where: { username: req.body.user.username } }).then(user => {
         if (user) {
-            bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
+            bcrypt.compare(req.body.user.password, user.passwordHash, (err, matches) => {
                 if (matches) {
-                    var token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                    const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                     res.json({
-                        user: user,
+                        user,
                         message: "Successfully authenticated.",
                         sessionToken: token
                     });
